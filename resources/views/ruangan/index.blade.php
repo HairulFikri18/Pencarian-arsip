@@ -9,17 +9,17 @@
                 </div>
             @endif
             <div class="page-heading">
-                <h1 class="page-title">Katergori</h1>
+                <h1 class="page-title">Ruangan</h1>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item">
                         <a href="index.html"><i class="la la-home font-20"></i></a>
                     </li>
-                    <li class="breadcrumb-item">Katergori</li>
+                    <li class="breadcrumb-item">Ruangan</li>
                 </ol>
             </div>
             <div class="pull-right mb-4">
                 @can('kategori-arsip-create')
-                    <a class="btn btn-success" href="{{ route('kategori.create') }}"> Create New Kategori</a>
+                    <a class="btn btn-success" href="{{ route('ruangan.create') }}"> Create New Ruangan</a>
                 @endcan
             </div>
         </div>
@@ -28,20 +28,20 @@
 
     <div class="ibox">
         <div class="ibox-body">
-            <table id="table-kategori" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+            <table id="table-ruangan" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Kategori</th>
-                        <th>Status</th>
+                        <th>Ruangan</th>
+                        <th>Deskripsi</th>
                         <th width="280px">Action</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th>No</th>
-                        <th>Kategori</th>
-                        <th>Status</th>
+                        <th>Ruangan</th>
+                        <th>Deskripsi</th>
                         <th width="280px">Action</th>
                     </tr>
                 </tfoot>
@@ -51,10 +51,10 @@
 
     <script>
         $(document).ready(function() {
-            var table = $('#table-kategori').DataTable({
+            var table = $('#table-ruangan').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('kategori.index') }}",
+                ajax: "{{ route('ruangan.index') }}",
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -62,15 +62,12 @@
                         searchable: false
                     },
                     {
-                        data: 'nama',
-                        name: 'nama'
+                        data: 'ruang',
+                        name: 'ruang'
                     },
                     {
-                        data: 'status',
-                        name: 'status',
-                        render: function(data, type, row) {
-                            return '<span class="badge badge-success">' + data + '</span>';
-                        }
+                        data: 'desc',
+                        name: 'desc',
                     },
                     {
                         data: 'action',

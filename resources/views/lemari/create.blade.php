@@ -13,41 +13,43 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('kategori.update', $kategori->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="ibox">
-                    <div class="ibox-head">
-                        <div class="ibox-title">
-                            <h2>Edit Category</h2>
+            <div class="ibox">
+                <div class="ibox-head">
+                    <div class="col-lg-12 margin-tb">
+                        <div class="pull-left">
+                            <h2><b>Add Lemari</b></h2>
                         </div>
                         <div class="pull-right">
-                            <a class="btn btn-primary" href="{{ route('kategori.index') }}"> Back</a>
-                        </div>
-                    </div>
-                    <div class="ibox-body">
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label"><strong>Nama:</strong></label>
-                            <div class="col-sm-10">
-                                <input type="text" name="nama" value="{{ $kategori->nama }}" class="form-control"
-                                    placeholder="Nama">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label"><strong>Status:</strong></label>
-                            <div class="col-sm-10">
-                                <input type="text" name="status" value="{{ $kategori->status }}" class="form-control"
-                                    placeholder="Status">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-sm-12 text-center">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
+                            <a class="btn btn-primary" href="{{ route('lemari.index') }}"> Back</a>
                         </div>
                     </div>
                 </div>
-            </form>
+                <div class="ibox-body">
+                    <form action="{{ route('lemari.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label"><strong>Lemari</strong></label>
+                            <div class="col-sm-10">
+                                <input type="text" name="lemari" class="form-control" placeholder="Lemari">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label"><strong>Deskripsi</strong></label>
+                            <div class="col-sm-10">
+                                <input type="text" name="desc" class="form-control" placeholder="Deskripsi">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-10 ml-sm-auto">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

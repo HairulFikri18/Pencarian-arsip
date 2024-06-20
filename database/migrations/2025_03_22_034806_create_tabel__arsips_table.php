@@ -17,16 +17,13 @@ return new class extends Migration
             $table->id();
             $table->string('kode_klasifikasi');
             $table->string('jenis_arsip');
-            $table->foreignId('id_kategori')->constrained('kategori__arsips')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('uraian_informasi');
-            $table->string('nama_ruang');
-            $table->string('nomor_rak');
-            $table->string('nomor_box');
-            $table->string('nomor_folder');
-            $table->string('jumlah_berkas');
-            $table->string('tanggal');
-            $table->string('file');
-            
+            $table->foreignId('id_kategori')->constrained('kategori__arsips')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('id_ruangans')->constrained('ruangans')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('id_lemari')->constrained('lemaris')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('id_rak')->constrained('raks')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('id_box')->constrained('boxes')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('folder');
             $table->timestamps();
         });
     }

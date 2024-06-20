@@ -4,17 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\Rak;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class RakController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    function __construct()
     {
-        //
+        $this->middleware(
+            'permission:role-create|role-delete',
+            ['only' => ['index', 'show']]
+        );
+        $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    }
+
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Rak::get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    if (Auth::user()->can('role-delete')) {
+                        $actionBtn = null;
+                        $actionBtn .= '<form action="' . route('rak.destroy', $row->id) . '" method="POST" class="d-inline">
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
+                        <button type="submit" class="delete btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this rak?\')">Delete</button>
+                      </form>';
+                    }
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('rak.index');
     }
 
     /**
@@ -24,62 +50,26 @@ class RakController extends Controller
      */
     public function create()
     {
-        //
+        return view('rak.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'rak' => 'required',
+            'desc' => 'required',
+        ]);
+
+        rak::create($request->all());
+
+        return redirect()->route('rak.index')->with('success', 'Rak Berhasil Ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Rak  $rak
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Rak $rak)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Rak  $rak
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Rak $rak)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Rak  $rak
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Rak $rak)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Rak  $rak
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Rak $rak)
-    {
-        //
+        $rak = rak::find($id);
+        $rak->delete();
+        return redirect()->back()->with('success', 'berhasil hapus data');
     }
 }

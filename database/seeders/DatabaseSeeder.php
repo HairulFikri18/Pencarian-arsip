@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Rak;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +21,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionTableSeeder::class,
             CreateAdminUserSeeder::class,
+            KatagorySeeder::class,
+            BoxSeeder::class,
+            LemariSeeder::class,
+            RakSeeder::class,
+            RuanganSeeder::class,
         ]);
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',

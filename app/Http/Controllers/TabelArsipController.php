@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Box;
 use App\Models\Kategori_Arsip;
+use App\Models\Lemari;
+use App\Models\Rak;
+use App\Models\Ruangan;
 use App\Models\Tabel_Arsip;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,7 +34,7 @@ class TabelArsipController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Tabel_Arsip::with('kategori')->select('*');
+            $data = Tabel_Arsip::with('kategori','ruangan','lemari','rak','box')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -50,8 +54,15 @@ class TabelArsipController extends Controller
 
                     return $actionBtn;
                 })->addColumn('kategori', function ($row) {
-                    // dd($row);
                     return $row->kategori->nama;
+                })->addColumn('ruangan', function ($row) {
+                    return $row->ruangan->ruang;
+                })->addColumn('lemari', function ($row) {
+                    return $row->lemari->lemari;
+                })->addColumn('rak', function ($row) {
+                    return $row->rak->rak;
+                })->addColumn('box', function ($row) {
+                    return $row->box->name;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -68,7 +79,11 @@ class TabelArsipController extends Controller
     public function create()
     {
         $kategoris = Kategori_Arsip::all();
-        return view('Tabel_Arsip.create', compact('kategoris'));
+        $raks = Rak::get();
+        $lemaris = Lemari::get();
+        $ruangans = Ruangan::get();
+        $boxs = Box::get();
+        return view('Tabel_Arsip.create', compact('kategoris','raks','lemaris','ruangans','boxs'));
     }
 
     /**
@@ -82,23 +97,16 @@ class TabelArsipController extends Controller
         $request->validate([
             'kode_klasifikasi' => 'required',
             'jenis_arsip' => 'required',
-            'id_kategori' => 'required',
             'uraian_informasi' => 'required',
-            'nama_ruang' => 'required',
-            'nomor_rak' => 'required',
-            'nomor_box' => 'required',
-            'nomor_folder' => 'required',
-            'jumlah_berkas' => 'required',
-            'tanggal'=>'required',
-            'file' => 'required',
+            'id_kategori' => 'required',
+            'id_ruangans' => 'required',
+            'id_lemari' => 'required',
+            'id_rak' => 'required',
+            'id_box' => 'required',
+            'folder' => 'required',
         ]);
 
         $input = $request->all();
-        if ($request->hasFile('file')) {
-            $fileName = time() . '.' . $request->file->extension();
-            $input['file'] = $fileName;
-            $request->file->move(public_path('tabel_arsip'), $fileName);
-        }
 
         Tabel_Arsip::create($input);
 
@@ -124,10 +132,17 @@ class TabelArsipController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
-        $tabel_arsip = Tabel_Arsip::findOrFail($id);
-        return view('Tabel_Arsip.edit', compact('tabel_arsip'));
-    }
+{
+    $kategoris = Kategori_Arsip::all();
+    $raks = Rak::get();
+    $lemaris = Lemari::get();
+    $ruangans = Ruangan::get();
+    $boxs = Box::get();
+    $tabel_arsip = Tabel_Arsip::find($id);
+
+    return view('Tabel_Arsip.edit', compact('tabel_arsip', 'kategoris', 'raks', 'lemaris', 'ruangans', 'boxs'));
+}
+
 
     /**
      * Update the specified resource in storage.
@@ -141,25 +156,17 @@ class TabelArsipController extends Controller
         $request->validate([
             'kode_klasifikasi' => 'required',
             'jenis_arsip' => 'required',
-            'id_kategori' => 'required',
             'uraian_informasi' => 'required',
-            'nama_ruang' => 'required',
-            'nomor_rak' => 'required',
-            'nomor_box' => 'required',
-            'nomor_folder' => 'required',
-            'jumlah_berkas' => 'required',
-            'tanggal'=>'required',
-            'file' => 'required',
+            'id_kategori' => 'required',
+            'id_ruangans' => 'required',
+            'id_lemari' => 'required',
+            'id_rak' => 'required',
+            'id_box' => 'required',
+            'folder' => 'required',
         ]);
         $tabel_arsip = Tabel_Arsip::find($id);
         $input = $request->all();
-        if ($request->hasFile('file')) {
-            $fileName = time() . '.' . $request->file->extension();
-            $input['file'] = $fileName;
-            $request->file->move(public_path('tabel_arsip'), $fileName);
-        } else {
-            $input['file'] = $tabel_arsip->file;
-        }
+
         $tabel_arsip->update($input);
         return redirect()->route('tabelarsips.index')->with('success', 'update berhasil');
     }
